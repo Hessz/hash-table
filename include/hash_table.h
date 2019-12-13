@@ -7,7 +7,7 @@
 #define HT_PRIME_2 163
 #define DEL_SUCESS 1
 #define DEL_ERR -1
-static ht_item HT_DELETED_ITEM = {NULL, NULL};
+//static ht_item HT_DELETED_ITEM = {NULL, NULL};
 
 typedef struct {
     char* key;
@@ -28,11 +28,11 @@ static int ht_get_hash(const char* string, const int number_of_buckets, const in
 
 //Item functions
 static ht_item* ht_new_item(const char* key, const char* value);
-void ht_delete_item(ht_item* item);
+static void ht_delete_item(ht_item* item);
 
 //API
 void ht_insert(ht_hash_table* ht, const char* key, const char* value);
 char* ht_search(ht_hash_table* ht, const char* key);
-void ht_delete(ht_hash_table* h, const char* key);
+int ht_delete(ht_hash_table* h, const char* key);
 
 #endif
