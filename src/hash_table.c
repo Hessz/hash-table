@@ -1,4 +1,5 @@
 #include "../include/hash_table.h"
+static ht_item HT_DELETED_ITEM = {NULL, NULL};
 
 static ht_item* ht_new_item(const char* k, const char* v){
    
@@ -12,12 +13,12 @@ ht_hash_table* ht_new(int size){
     
   ht_hash_table* ht = malloc(sizeof(ht_hash_table));
   ht->count = 0;
-  ht->size = 53; //hardcoded for now
+  ht->size = size; 
   ht->items = calloc((size_t)ht->size, sizeof(ht_item*));
   return ht;
 }
 
-void ht_delete_item(ht_item* item){
+static void ht_delete_item(ht_item* item){
   
   free(item->key);
   free(item->value);
@@ -28,8 +29,9 @@ void ht_delete_hash_table(ht_hash_table* ht){
     
   for(int i = 0; i < ht->size; i++){
     ht_item* item = ht->items[i];
-    if(item != NULL)
+    if(item != NULL && item != &HT_DELETED_ITEM){
       ht_delete_item(item);
+    }
   }
   free(ht->items);
   free(ht);
@@ -49,14 +51,14 @@ static int ht_hash(const char* string, const int prime, const int number_of_buck
 static int ht_get_hash(const char* string, const int number_of_buckets, const int attempt){
   
   const int hash_a = ht_hash(string, HT_PRIME_1, number_of_buckets);
-  const int hash_a = ht_hash(string, HT_PRIME_2, number_of_buckets);
+  const int hash_b = ht_hash(string, HT_PRIME_2, number_of_buckets);
   return (hash_a + attempt * (hash_b + 1)) % number_of_buckets;
 }
 
 //API
 void ht_insert(ht_hash_table* ht, const char* key, const char* value){
  
-  ht_item new_item = ht_new_item(key, value);
+  ht_item* new_item = ht_new_item(key, value);
   
   int attempt = 0;
   int index = ht_get_hash(key, ht->size, attempt);
